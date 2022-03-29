@@ -1,69 +1,107 @@
 import React, { useState } from "react";
-import { Navbar, Container, Nav } from "react-bootstrap";
-import { Link, Route, Switch } from "react-router-dom";
 import "./App.css";
-import Detail from "./detail";
-import Data from "./data";
 
 function App() {
-  let [shoes, shoes변경] = useState(Data);
+  let [글제목, 글제목변경] = useState([
+    "남자 코트 추천",
+    "강남 우동 맛집",
+    "가경이짱",
+  ]);
+
+  function 제목바꾸기() {
+    var newArr = [...글제목];
+    newArr[0] = "여자 코트 추천";
+    글제목변경(newArr);
+  }
+  function 가나다() {
+    var arr = [...글제목];
+    arr.sort();
+    글제목변경(arr);
+    console.log(arr);
+  }
+
+  let [따봉, 따봉변경] = useState([0, 0, 0]);
+
+  let [모달, 모달변경] = useState(false);
+
+  let [누른제목, 누른제목변경] = useState(0);
+
+  let [입력값, 입력값변경] = useState("");
 
   return (
-    <>
-      <div className="App">
-        <Navbar bg="dark" variant="dark">
-          <Container>
-            <Navbar.Brand href="#home">샤핑몰</Navbar.Brand>
-            <Nav className="me-auto">
-              <Nav.Link as={Link} to="/">
-                Home
-              </Nav.Link>
-              <Nav.Link as={Link} to="/detail">
-                Detail
-              </Nav.Link>
-              <Nav.Link href="#pricing">Pricing</Nav.Link>
-            </Nav>
-          </Container>
-        </Navbar>
-
-        <Route exact path="/">
-          <div className="jumbo">
-            <h1>20% Session Off</h1>
-            <p>설명어쩌고저쩌고</p>
-            <button type="button" class="btn btn-primary">
-              Lean more
-            </button>
-          </div>
-
-          <div className="container">
-            <div className="row">
-              {shoes.map((a, i) => {
-                return <Card shoes={shoes[i]} i={i} key={i} />;
-              })}
-            </div>
-          </div>
-        </Route>
-
-        <Route path="/detail/:id">
-          <Detail shoes={shoes} />
-        </Route>
+    <div className="App">
+      <div className="black-nav">
+        <div>개발 blog</div>
       </div>
-    </>
+      <button onClick={제목바꾸기}>버튼</button>
+      <button onClick={가나다}>가나다</button>
+
+      {글제목.map(function (a, i) {
+        return (
+          <div className="list" key={i}>
+            <h3
+              onClick={() => {
+                누른제목변경(i);
+              }}
+            >
+              {a}
+              <span
+                onClick={() => {
+                  let like = [...따봉];
+                  like[i]++;
+                  return 따봉변경(like);
+                }}
+              >
+                👍🏻
+              </span>
+              <span>{따봉[i]}</span>
+            </h3>
+            <p>2월 17일 발행</p>
+            <hr />
+          </div>
+        );
+      })}
+
+      {/* <input
+        onChange={(e) => {
+          입력값변경(e.target.value);
+        }}
+      /> */}
+      <div className="publish">
+        <input
+          onChange={(e) => {
+            입력값변경(e.target.value);
+          }}
+        ></input>
+        <button
+          onClick={() => {
+            let a = [...글제목];
+            a.unshift(입력값);
+            글제목변경(a);
+          }}
+        >
+          저장
+        </button>
+      </div>
+
+      <button
+        onClick={() => {
+          모달변경(!모달);
+        }}
+      >
+        열고닫기
+      </button>
+      {모달 === true ? <Modal 글제목={글제목} 누른제목={누른제목} /> : null}
+    </div>
   );
 }
 
-function Card(props) {
+function Modal(props) {
   return (
-    <div className="col-md-4">
-      <img
-        src={
-          "https://codingapple1.github.io/shop/shoes" + (props.i + 1) + ".jpg"
-        }
-        width="100%"
-      />
-      <h4>{props.shoes.title}</h4>
-      <p>{props.shoes.content}</p>
-      <p>{props.shoes.price}</p>
+    <div className="modal">
+      <h2>{props.글제목[props.누른제목]}</h2>
+      <p>날짜</p>
+      <p>상세내용</p>
     </div>
   );
 }
